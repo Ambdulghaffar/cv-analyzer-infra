@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: ./cv-analyzer-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./cv-analyzer-api/.env
+    volumes:
+      - ./cv-analyzer-api:/app
+
+  web:
+    build:
+      context: ./cv-analyzer-web
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./cv-analyzer-web/.env
+    depends_on:
+      - api

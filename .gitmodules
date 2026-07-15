@@ -1,0 +1,6 @@
+[submodule "cv-analyzer-web"]
+	path = cv-analyzer-web
+	url = https://github.com/Ambdulghaffar/cv-analyzer-web.git
+[submodule "cv-analyzer-api"]
+	path = cv-analyzer-api
+	url = https://github.com/Ambdulghaffar/cv-analyzer-api.git
