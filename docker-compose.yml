@@ -1,20 +1,49 @@
+name: cv-analyzer
+
 services:
   api:
     build:
       context: ./cv-analyzer-api
-    ports:
-      - "8000:8000"
+      dockerfile: Dockerfile
+    container_name: cv-analyzer-api
+    restart: unless-stopped
     env_file:
       - ./cv-analyzer-api/.env
-    volumes:
-      - ./cv-analyzer-api:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - cv-analyzer-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   web:
     build:
       context: ./cv-analyzer-web
-    ports:
-      - "3000:3000"
+      dockerfile: Dockerfile
+    container_name: cv-analyzer-web
+    restart: unless-stopped
     env_file:
       - ./cv-analyzer-web/.env
+    environment:
+      - HOSTNAME=0.0.0.0
+    ports:
+      - "3000:3000"
+    networks:
+      - cv-analyzer-network
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  cv-analyzer-network:
+    driver: bridge
