@@ -38,6 +38,7 @@ cv-analyzer-infra/
 ├── cv-analyzer-web/    (submodule — Next.js frontend)
 ├── cv-analyzer-api/    (submodule — FastAPI backend)
 ├── docker-compose.yml
+├── .env                (build-time variables for the web service — not committed)
 └── README.md
 
 ## Architecture overview
@@ -78,7 +79,14 @@ cv-analyzer-infra/
    git submodule update --init --recursive
 ```
 
-3. Create a `.env.local` file inside `cv-analyzer-web/` with the required variables:
+3. Create a `.env` file **at the root of this repository** (`cv-analyzer-infra/.env`, next to `docker-compose.yml`) with the following variables:
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   This file is distinct from `cv-analyzer-web/.env.local` (step 4 below) and is used exclusively by Docker Compose to resolve the `build.args` of the `web` service, so that the `NEXT_PUBLIC_*` variables are correctly baked into the Next.js build. It does not replace `cv-analyzer-web/.env.local`, which is still required separately for the container's runtime — see [Why two .env files for the frontend?](#why-two-env-files-for-the-frontend) below.
+
+4. Create a `.env.local` file inside `cv-analyzer-web/` with the required variables:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -86,21 +94,25 @@ INTERNAL_API_URL=http://api:8000
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
    The purpose of each variable is documented in the [cv-analyzer-web README](https://github.com/Ambdulghaffar/cv-analyzer-web).
 
-4. Create a `.env` file inside `cv-analyzer-api/` with the required variables:
+5. Create a `.env` file inside `cv-analyzer-api/` with the required variables:
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
 GROQ_API_KEY=
 CORS_ORIGINS=http://localhost:3000
    The purpose of each variable is documented in the [cv-analyzer-api README](https://github.com/Ambdulghaffar/cv-analyzer-api).
 
-5. From the root of this repository, build and start both services:
+6. From the root of this repository, build and start both services (make sure the root `.env` file from step 3 exists before running this — otherwise the build args will be empty and the frontend build will be missing its `NEXT_PUBLIC_*` values):
 ```bash
    docker compose up --build
 ```
 
-6. Access the applications:
+7. Access the applications:
    - Frontend: [http://localhost:3000](http://localhost:3000)
    - Interactive API documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+## Why two .env files for the frontend?
+
+Next.js "bakes" `NEXT_PUBLIC_*` variables directly into the compiled JavaScript bundle during `npm run build`, so they must be available at build time, not just when the container starts. The root `cv-analyzer-infra/.env` supplies these values as Docker Compose `build.args` for the `web` service's image build, while `cv-analyzer-web/.env.local` is passed via `env_file` and only affects the container at runtime. Both files are needed and should contain the same `NEXT_PUBLIC_*` values.
 
 ## Updating submodules
 
