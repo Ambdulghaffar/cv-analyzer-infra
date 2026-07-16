@@ -27,7 +27,7 @@ services:
     container_name: cv-analyzer-web
     restart: unless-stopped
     env_file:
-      - ./cv-analyzer-web/.env
+      - ./cv-analyzer-web/.env.local
     environment:
       - HOSTNAME=0.0.0.0
     ports:

@@ -78,7 +78,7 @@ cv-analyzer-infra/
    git submodule update --init --recursive
 ```
 
-3. Create a `.env` file inside `cv-analyzer-web/` with the required variables:
+3. Create a `.env.local` file inside `cv-analyzer-web/` with the required variables:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_API_URL=http://localhost:8000
