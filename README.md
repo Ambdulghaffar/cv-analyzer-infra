@@ -126,9 +126,6 @@ The same process applies to `cv-analyzer-api`.
 - [cv-analyzer-web](https://github.com/Ambdulghaffar/cv-analyzer-web) — Next.js frontend
 - [cv-analyzer-api](https://github.com/Ambdulghaffar/cv-analyzer-api) — FastAPI backend
 
-## Author
-
-**Ambdulghaffar Ahamadi**
 
 ## Author
 
